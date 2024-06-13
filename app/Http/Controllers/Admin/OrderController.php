@@ -60,7 +60,61 @@ class OrderController extends Controller
     {
         return view('admin.orders.show', compact('order'));
     }
+    public function savePayment(Request $request, $orderId)
+{
+    $order = Order::find($orderId);
 
+    if (!$order) {
+        return redirect()->back()->with([
+            'message' => 'Order not found!',
+            'alert-type' => 'error'
+        ]);
+    }
+    
+    $order->update(['payment_status' => 'paid', 'total_paid' => $request->total_paid]);
+    $changeAmount = $request->total_paid - $order->base_total_price;
+    $order->change_amount = $changeAmount;
+    $order->save();
+    
+    // Simpan total dibayarkan dalam session
+    session(['total_paid' => $request->total_paid]);
+
+    return redirect()->route('admin.orders.show', $order)->with([
+        'message' => 'Payment status updated to paid!',
+        'alert-type' => 'success',
+        'total_paid' => $request->total_paid,
+    ]);
+}
+
+    public function markAsPaid(Request $request, $orderId)
+{
+    $order = Order::find($orderId);
+
+    if (!$order) {
+        return redirect()->back()->with([
+            'message' => 'Order not found!',
+            'alert-type' => 'error'
+        ]);
+    }
+    
+    $order->update(['payment_status' => 'paid', 'total_paid' => $request->total_paid]);
+    $changeAmount = $request->total_paid - $order->base_total_price;
+    $order->change_amount = $changeAmount;
+    $order->save();
+    
+    // Simpan total dibayarkan dalam session
+    session(['total_paid' => $request->total_paid]);
+
+    return redirect()->route('admin.orders.show', $order)->with([
+        'message' => 'Payment status updated to paid!',
+        'alert-type' => 'success',
+        'total_paid' => $request->total_paid,
+    ]);
+}
+
+    
+    // ...
+    
     /**
      * Remove the specified resource from storage.
      *
@@ -70,15 +124,6 @@ class OrderController extends Controller
     public function destroy(Order $order)
     {
 
-        // \DB::transaction(
-        //     function () use ($order) {
-        //         OrderItem::where('order_id', $order->id)->delete();
-        //         $order->shipment->delete();
-        //         $order->forceDelete();
-
-        //         return true;
-        //     }
-        // );
         OrderItem::where('order_id', $order->id)->delete();
         $order->delete();
 

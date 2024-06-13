@@ -38,8 +38,8 @@ class ProductController extends BaseController
     public function show(Request $request){
         $product = Product::with('media', 'category', 'tags')
             ->where('slug', $request->slug)
-            ->withCount('media','approvedReviews')
-            ->withAvg('approvedReviews', 'rating')
+            //->withCount('media','approvedReviews')
+            //->withAvg('approvedReviews', 'rating')
             ->active()
             ->hasQuantity()
             ->firstOrFail();

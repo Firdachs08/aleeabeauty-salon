@@ -27,6 +27,16 @@
                 </div>
             </div>
             <div class="table-responsive">
+            <form action="{{ route('admin.categories.index') }}" method="GET" class="form-inline p-3">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search categories..." value="{{ request('search') }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
                 <table class="table table-hover table-bordered">
                     <thead>
                     <tr>
@@ -34,7 +44,7 @@
                         <th>Image</th>
                         <th>Name</th>
                         <th>Product count</th>
-                        <th>Parent</th>
+                        
                         <th class="text-center" style="width: 30px;">Action</th>
                     </tr>
                     </thead>
@@ -55,7 +65,7 @@
                                 </a>
                             </td>
                             <td>{{ $category->products_count }}</td>
-                            <td>{{ $category->parent->name ?? '' }}</td>
+                            
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-sm btn-primary">

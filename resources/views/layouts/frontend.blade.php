@@ -42,7 +42,7 @@
                         <div class="header-bottom-wrapper">
                             <div class="logo-2 furniture-logo ptb-30">
                                 <a href="/">
-                                    <img height="60" style="transform:scale(1.5);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.png') }}" alt="">
+                                <img height="60" style="transform:scale(2);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.jpg') }}" alt="">
                                 </a>
                             </div>
                             <div class="menu-style-2 furniture-menu menu-hover">
@@ -188,77 +188,72 @@
 
         @yield('content')
 
-        <!-- footer -->
         <footer class="footer-area">
-            <div class="footer-top-area pt-70 pb-35 wrapper-padding-5">
-                <div class="container-fluid">
-                    <div class="widget-wrapper">
-                        <div class="footer-widget mb-30">
-                        <img height="60" style="transform:scale(1.5);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.png') }}" alt="">
-                            <div class="footer-about-2">
-                                <p>There are many variations of passages of Lorem Ipsum <br>the majority have suffered alteration in some form, by <br> injected humour</p>
+    <div class="footer-top-area pt-70 pb-35 wrapper-padding-5">
+        <div class="container-fluid">
+            <div class="widget-wrapper">
+                <div class="footer-widget mb-30">
+                    <img height="60" style="transform:scale(1.5);object-fit: cover;" src="{{ asset('frontend/assets/img/logo/logo.jpg') }}" alt="">
+                    <div class="footer-about-2">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3952.720934169864!2d113.2532870147671!3d-7.764183794418034!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd6862a8f23b04d%3A0x6c21b32ee7b8d746!2sJl.%20Mastrip%20No.159%2C%20Jrebeng%20Wetan%2C%20Kec.%20Kedopok%2C%20Kota%20Probolinggo%2C%20Jawa%20Timur%2067227!5e0!3m2!1sen!2sid!4v1649652136072!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+                <div class="footer-widget mb-30">
+                    <h3 class="footer-widget-title-5">Contact Info</h3>
+                    <div class="footer-info-wrapper-3">
+                        <div class="footer-address-furniture">
+                            <div class="footer-info-icon3">
+                                <span>Alamat: </span>
+                            </div>
+                            <div class="footer-info-content3">
+                                <p>Jl. Mastrip No.159 <br>Kec. Kedopok, Kota Probolinggo</p>
                             </div>
                         </div>
-                        <div class="footer-widget mb-30">
-                            <h3 class="footer-widget-title-5">Contact Info</h3>
-                            <div class="footer-info-wrapper-3">
-                                <div class="footer-address-furniture">
-                                    <div class="footer-info-icon3">
-                                        <span>Address: </span>
-                                    </div>
-                                    <div class="footer-info-content3">
-                                        <p>66 Sipu road Rampura Banasree <br>USA- 10800</p>
-                                    </div>
-                                </div>
-                                <div class="footer-address-furniture">
-                                    <div class="footer-info-icon3">
-                                        <span>Phone: </span>
-                                    </div>
-                                    <div class="footer-info-content3">
-                                        <p>+8801 (33) 515609735 <br>+8801 (66) 223352333</p>
-                                    </div>
-                                </div>
-                                <div class="footer-address-furniture">
-                                    <div class="footer-info-icon3">
-                                        <span>E-mail: </span>
-                                    </div>
-                                    <div class="footer-info-content3">
-                                        <p><a href="#"> email@domain.com</a> <br><a href="#"> domain@mail.info</a></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="footer-widget mb-30">
-                            <h3 class="footer-widget-title-5">Newsletter</h3>
-                            <div class="footer-newsletter-2">
-                                <p>Send us your mail or next updates</p>
-                                <div id="mc_embed_signup" class="subscribe-form-5">
-                                    <form action="http://devitems.us11.list-manage.com/subscribe/post?u=6bbb9b6f5827bd842d9640c82&amp;id=05d85f18ef" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-                                        <div id="mc_embed_signup_scroll" class="mc-form">
-                                            <input type="email" value="" name="EMAIL" class="email" placeholder="Enter mail address" required>
-                                            <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-                                            <div class="mc-news" aria-hidden="true"><input type="text" name="b_6bbb9b6f5827bd842d9640c82_05d85f18ef" tabindex="-1" value=""></div>
-                                            <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="footer-address-furniture">
+    <div class="footer-info-icon3">
+        <span>WA: </span> 
+    </div>
+    <div class="footer-info-content3"> 
+        <p><a href="https://wa.me/6285645979260" target="_blank">085645979260</a></p>
+    </div>
+</div>
+<div class="footer-address-furniture">
+    <div class="footer-info-icon3">
+        <span>IG: </span>
+    </div>
+    <div class="footer-info-content3">
+        <p><a href="https://www.instagram.com/aleea.beautysalon" target="_blank">aleea.beautysalon</a></p>
+    </div>
+</div>
+
+                    </div>
+                </div>
+                <div class="footer-widget mb-30">
+                    <h3 class="footer-widget-title-5" style="font-size: 1.5em;">Quick Links</h3>
+                    <div class="footer-newsletter-2">
+                        <ul style="font-size: 1.2em;">
+                            <li><a href="/">Home</a></li>
+                            <li><a href="{{ route('shop.index') }}">Shop</a></li>
+                            <li><a href="{{ route('service.index') }}">Services</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="footer-bottom ptb-20 gray-bg-8">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <div class="copyright-furniture">
-                                <p>Copyright © <a href="https://hastech.company/">HasTech</a> 2018 . All Right Reserved.</p>
-                            </div>
-                        </div>
+        </div>
+    </div>
+    <div class="footer-bottom ptb-20 gray-bg-8">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="copyright-furniture">
+                        <p>Copyright © <a href="https://hastech.company/">Aleea Salon</a> 2024 . All Right Reserved.</p>
                     </div>
                 </div>
             </div>
-        </footer>
+        </div>
+    </div>
+</footer>
+
 
 
 

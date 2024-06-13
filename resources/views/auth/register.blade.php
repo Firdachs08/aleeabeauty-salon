@@ -5,6 +5,9 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
+                <div class="card-header text-center">
+                    <img src="{{ asset('frontend/assets/img/logo/logo.jpg') }}" alt="Salon Logo" style="width: 150px;">
+                </div>
                 <div class="card-header">{{ __('Register') }}</div>
 
                 <div class="card-body">
@@ -12,10 +15,10 @@
                         @csrf
 
                         <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Username') }}</label>
+                            <label for="username" class="col-md-4 col-form-label text-md-end">{{ __('Username') }}</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="Username" autofocus>
+                                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
 
                                 @error('username')
                                     <span class="invalid-feedback" role="alert">
@@ -38,7 +41,19 @@
                                 @enderror
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <label for="phone" class="col-md-4 col-form-label text-md-end">{{ __('Phone Number') }}</label>
 
+                            <div class="col-md-6">
+                                <input id="phone" type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" value="{{ old('phone') }}" required autocomplete="phone">
+
+                                @error('phone')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="row mb-3">
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
 
@@ -69,6 +84,13 @@
                             </div>
                         </div>
                     </form>
+                    <div class="row mt-3">
+                        <div class="col-md-6 offset-md-4">
+                            <a href="{{ route('login') }}">
+                                {{ __('Sudah punya akun?') }} <span style="text-decoration: underline;">{{ __('Login') }}</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

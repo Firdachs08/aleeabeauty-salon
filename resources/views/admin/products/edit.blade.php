@@ -98,15 +98,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                <label for="details" class="text-small text-uppercase">{{ __('details') }}</label>
-                                <textarea name="details" rows="3" class="form-control summernote">{!! old('details', $product->details) !!}</textarea>
-                                @error('details')<span class="text-danger">{{ $message }}</span>@enderror
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="row">
                             <div class="col-12">
                                 <label for="images">{{ __('images') }}</label>

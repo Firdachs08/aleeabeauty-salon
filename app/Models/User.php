@@ -21,9 +21,14 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        
+        'phone',
         'role', // Add the role attribute here
     ];
+    public function assignRole($role)
+    {
+        $this->role = $role; // Anggaplah kolom peran pada tabel pengguna adalah 'role'
+        $this->save();
+    }
 
     /**
      * The attributes that should be hidden for serialization.

@@ -21,17 +21,7 @@ class OrderController extends Controller
             return redirect()->route('cart.index');
         }
 
-        // \Cart::removeConditionsByType('shipping');
-
         $items = \Cart::getContent();
-
-        // $totalWeight = 0;
-        // foreach ($items as $item) {
-        //     $totalWeight += ($item->quantity * $item->associatedModel->weight);
-        // }
-
-        // $provinces = $this->getProvinces();
-        // $cities = isset(auth()->user()->city_id) ? $this->getCities(auth()->user()->province_id) : [];
 
         return view('frontend.orders.checkout', compact('items'));
     }
@@ -188,42 +178,14 @@ class OrderController extends Controller
     public function checkout(Request $request)
     {
         $token = $request->except('_token');
-
+    
         $order = \DB::transaction(function () use ($token) {
-            // $destination = isset($params['ship_to']) ? $params['shipping_city_id'] : $params['city_id'];
-            // $items = \Cart::getContent();
-
-            // $totalWeight = 0;
-            // foreach ($items as $item) {
-            //     $totalWeight += ($item->quantity * $item->associatedModel->weight);
-            // }
-
-            // $selectedShipping = $this->getSelectedShipping($destination, $totalWeight, $params['shipping_service']);
-
+    
             $baseTotalPrice = \Cart::getSubTotal();
-            // $shippingCost = $selectedShipping['cost'];
-            // $discountAmount = 0;
-            // $discountPercent = 0;
-            // $grandTotal = ($baseTotalPrice + $shippingCost) - $discountAmount;
-
+    
             $orderDate = date('Y-m-d H:i:s');
             $paymentDue = (new \DateTime($orderDate))->modify('+3 day')->format('Y-m-d H:i:s');
-
-            // $user_profile = [
-            //     'username' => $params['username'],
-            //     'first_name' => $params['first_name'],
-            //     'last_name' => $params['last_name'],
-            //     'address1' => $params['address1'],
-            //     'address2' => $params['address2'],
-            //     'province_id' => $params['province_id'],
-            //     'city_id' => $params['city_id'],
-            //     'postcode' => $params['postcode'],
-            //     'phone' => $params['phone'],
-            //     'email' => $params['email'],
-            // ];
-
-            // auth()->user()->update($user_profile);
-
+    
             $orderParams = [
                 'user_id' => auth()->id(),
                 'code' => Order::generateCode(),
@@ -232,37 +194,29 @@ class OrderController extends Controller
                 'payment_due' => $paymentDue,
                 'payment_status' => Order::UNPAID,
                 'base_total_price' => $baseTotalPrice,
-                // 'discount_amount' => $discountAmount,
-                // 'discount_percent' => $discountPercent,
-                // 'shipping_cost' => $shippingCost,
-                // 'grand_total' => $grandTotal,
                 'customer_first_name' => $token['username'],
-                // 'customer_last_name' => $params['last_name'],
-                // 'customer_address1' => $params['address1'],
-                // 'customer_address2' => $params['address2'],
                 'customer_phone' => $token['phone'],
-                // 'customer_email' => $params['email'],
-                // 'customer_city_id' => $params['city_id'],
-                // 'customer_province_id' => $params['province_id'],
-                // 'customer_postcode' => $params['postcode'],
                 'note' => $token['note'],
-                // 'shipping_courier' => $selectedShipping['courier'],
-                // 'shipping_service_name' => $selectedShipping['service'],
             ];
-
+            if (!empty($token['reseller']) && $token['reseller'] === 'on') {
+                $orderParams['customer_first_name'] = $token['customer_first_name']; // Simpan reseller name jika checkbox reseller dicentang
+                $orderParams['customer_phone'] = $token['customer_phone']; // Simpan reseller phone jika checkbox reseller dicentang
+            }
+            
+    
             $order = Order::create($orderParams);
-
+    
             $cartItems = \Cart::getContent();
-
+    
             if ($order && $cartItems) {
                 foreach ($cartItems as $item) {
                     $itemDiscountAmount = 0;
                     $itemDiscountPercent = 0;
                     $itemBaseTotal = $item->quantity * $item->price;
                     $itemSubTotal = $itemBaseTotal - $itemDiscountAmount;
-
+    
                     $product = $item->associatedModel;
-
+    
                     $orderItemParams = [
                         'order_id' => $order->id,
                         'product_id' => $item->associatedModel->id,
@@ -275,9 +229,9 @@ class OrderController extends Controller
                         'name' => $item->name,
                         'weight' => $item->associatedModel->weight,
                     ];
-
+    
                     $orderItem = OrderItem::create($orderItemParams);
-
+    
                     if ($orderItem) {
                         $product = Product::findOrFail($product->id);
                         $product->quantity -= $item->quantity;
@@ -285,58 +239,26 @@ class OrderController extends Controller
                     }
                 }
             }
-
-
-
-            // $shippingFirstName = isset($params['ship_to']) ? $params['shipping_first_name'] : $params['first_name'];
-            // $shippingLastName = isset($params['ship_to']) ? $params['shipping_last_name'] : $params['last_name'];
-            // $shippingAddress1 = isset($params['ship_to']) ? $params['shipping_address1'] : $params['address1'];
-            // $shippingAddress2 = isset($params['ship_to']) ? $params['shipping_address2'] : $params['address2'];
-            // $shippingPhone = isset($params['ship_to']) ? $params['shipping_phone'] : $params['phone'];
-            // $shippingEmail = isset($params['ship_to']) ? $params['shipping_email'] : $params['email'];
-            // $shippingCityId = isset($params['ship_to']) ? $params['shipping_city_id'] : $params['city_id'];
-            // $shippingProvinceId = isset($params['ship_to']) ? $params['shipping_province_id'] : $params['province_id'];
-            // $shippingPostcode = isset($params['ship_to']) ? $params['shipping_postcode'] : $params['postcode'];
-
-            // $shipmentParams = [
-            //     'user_id' => auth()->id(),
-            //     'order_id' => $order->id,
-            //     'status' => Shipment::PENDING,
-            //     'total_qty' => \Cart::getTotalQuantity(),
-            //     'total_weight' => $totalWeight,
-            //     'first_name' => $shippingFirstName,
-            //     'last_name' => $shippingLastName,
-            //     'address1' => $shippingAddress1,
-            //     'address2' => $shippingAddress2,
-            //     'phone' => $shippingPhone,
-            //     'email' => $shippingEmail,
-            //     'city_id' => $shippingCityId,
-            //     'province_id' => $shippingProvinceId,
-            //     'postcode' => $shippingPostcode,
-            // ];
-            // Shipment::create($shipmentParams);
-
             return $order;
         });
-
+    
         if (!isset($order)) {
             return redirect()->back()->with([
-                'message' => 'something went wrong !',
+                'message' => 'something went wrong!',
                 'alert-type' => 'danger'
             ]);
-            // return redirect()->route('checkout.received', $order->id);
         }
-
+    
         if ($request['cash'] === "on" && $request['cashless'] === "on") {
             return '<script>alert("Choose one payment only!!!");window.location.href="/orders/checkout"</script>';
         }
-
+    
         if ($request['cash'] === "on") {
             \Cart::clear();
-            $order->update(['payment_status' => 'cash']);
+            $order->update(['payment_status' => 'unpaid']);
             return view('frontend.orders.cash', compact('order'));
         }
-
+    
         // Set your Merchant Server Key
         \Midtrans\Config::$serverKey = config('midtrans.serverKey');
         // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
@@ -345,58 +267,23 @@ class OrderController extends Controller
         \Midtrans\Config::$isSanitized = true;
         // Set 3DS transaction for credit card to true
         \Midtrans\Config::$is3ds = true;
-
-        $params = array(
-            'transaction_details' => array(
+    
+        $params = [
+            'transaction_details' => [
                 'order_id' => Str::random(15),
                 'gross_amount' => $order->base_total_price,
-            ),
-            'customer_details' => array(
+            ],
+            'customer_details' => [
                 'name' => $request->username,
                 'handphone' => $request->phone,
-            ),
-        );
-
+            ],
+        ];
+    
         $snapToken = \Midtrans\Snap::getSnapToken($params);
-
+    
         return view('frontend.orders.confirmation', compact('snapToken', 'order'));
-
-        // $this->initPaymentGateway();
-
-        // $customerDetails = [
-        //     'first_name' => $order->customer_first_name,
-        //     'last_name' => $order->customer_last_name,
-        //     'email' => $order->customer_email,
-        //     'phone' => $order->customer_phone,
-        // ];
-
-        // $transaction_details = [
-        //     'enable_payments' => Payment::PAYMENT_CHANNELS,
-        //     'transaction_details' => [
-        //         'order_id' => $order->code,
-        //         'gross_amount' => $order->grand_total,
-        //     ],
-        //     'customer_details' => $customerDetails,
-        //     'expiry' => [
-        //         'start_time' => date('Y-m-d H:i:s T'),
-        //         'unit' => Payment::EXPIRY_UNIT,
-        //         'duration' => Payment::EXPIRY_DURATION,
-        //     ]
-        // ];
-
-        // try {
-        //     $snap = Snap::createTransaction($transaction_details);
-
-        //     $order->payment_token = $snap->token;
-        //     $order->payment_url = $snap->redirect_url;
-        //     $order->save();
-
-        //     header('Location: ' . $order->payment_url);
-        //     exit;
-        // } catch (Exception $e) {
-        //     echo $e->getMessage();
-        // }
     }
+    
 
     public function order_success($orderId)
     {

@@ -19,11 +19,15 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {   
         //abort_if(Gate::denies('product_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $products = Product::with('category', 'tags', 'firstMedia')->latest()->paginate(5); 
+        $search = $request->input('search');
+        
+        $products = Product::query()
+            ->where('name', 'LIKE', "%{$search}%")
+            ->paginate(10);
+        //$products = Product::with('category', 'tags', 'firstMedia')->latest()->paginate(5); 
 
         return view('admin.products.index', compact('products'));
     }

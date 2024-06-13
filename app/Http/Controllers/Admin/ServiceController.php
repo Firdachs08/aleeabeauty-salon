@@ -19,9 +19,18 @@ class ServiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::paginate(5);
+        $search = $request->input('search');
+
+        $services = Service::query()
+        ->when($search, function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                  ->orWhereHas('obtaineds', function ($query) use ($search) {
+                      $query->where('name', 'like', '%' . $search . '%');
+                  });
+        })
+        ->paginate(5);
 
         return view('admin.services.index', compact('services'));
     }

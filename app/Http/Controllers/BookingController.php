@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Midtrans\Config;
 use App\Models\Booking;
 use App\Models\Schedule;
 use App\Models\Service;
@@ -37,24 +37,33 @@ class BookingController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-            'handphone' => 'required|numeric',
-            'category' => 'required',
-            'schedule_id' => 'required|exists:schedules,id',
-        ]);
+{
+    $request->validate([
+        'name' => 'required',
+        'handphone' => 'required|numeric',
+        'category' => 'required',
+        'schedule_id' => 'required|exists:schedules,id',
+    ]);
 
-        $schedule = Schedule::find($request->schedule_id);
-$scheduleId = $schedule->id; 
-        $currentBookings = Booking::where('schedule_id', $request->schedule_id)->count();
+    $schedule = Schedule::find($request->schedule_id);
+    $scheduleId = $schedule->id; 
+    $currentBookings = Booking::where('schedule_id', $request->schedule_id)->count();
 
-        if ($currentBookings >= $schedule->max_slot) {
-            return redirect()->back()->with('error', 'Schedule is fully booked');
-        }
+    if ($currentBookings >= $schedule->max_slot) {
+        return redirect()->back()->with('error', 'Schedule is fully booked');
+    }
 
-        $date = $schedule->date;
-$time = $schedule->time;
+    $date = $schedule->date;
+    $time = $schedule->time;
+
+    // Periksa apakah hanya satu metode pembayaran yang dipilih
+    if ($request->cash && $request->cashless) {
+        return redirect()->back()->with('error', 'Hanya pilih satu metode pembayaran');
+    }
+
+    // Set status berdasarkan metode pembayaran yang dipilih
+$status = $request->cash ? 'Cash' : 'Cashless';
+
 $booking = Booking::create([
     'service_name' => $request->service_name,
     'name' => $request->name,
@@ -63,48 +72,56 @@ $booking = Booking::create([
     'date' => $date,
     'time' => $time,
     'total' => $request->price,
-    'status' => 'Unpaid',
-    'schedule_id' => $request->schedule_id, // Assign schedule_id here
+    'status' => $status === 'Cashless' ? 'Unpaid' : 'Paid', // Ubah status sesuai dengan metode pembayaran yang dipilih
+    'schedule_id' => $request->schedule_id,
+    'order_id' => Str::uuid(),
 ]);
 
-        if ($request['cash'] === "on" && $request['cashless'] === "on") {
-            return '<script>alert("Choose one payment only!!!");window.location.href="/orders/checkout"</script>';
-        }
+if ($currentBookings + 1 >= $schedule->max_slot) {
+    $schedule->status = 'not available';
+    $schedule->save();
+}
 
-        if ($currentBookings + 1 >= $schedule->max_slot) {
-            $schedule->status = 'not available';
-            $schedule->save();
-        }
-        if ($request['cash'] === "on") {
-            $booking->update(['status' => 'Cash']);
-           // $scheduleData->update(['status' => 'booked']);
-            return view('frontend.booking.paycash', compact('booking'));
-        }
+// Jika pembayaran dilakukan menggunakan cash, langsung tampilkan halaman pembayaran
+if ($status === 'Cash') {
+    $booking->update(['status' => 'Cash']);
+    return view('frontend.booking.paycash', compact('booking'));
+}
 
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
+// Jika pembayaran dilakukan menggunakan cashless, langsung ubah status menjadi Paid
+if ($status === 'Cashless') {
+    $booking->update(['status' => 'Paid']);
+    // Lanjutkan dengan logika untuk pembayaran cashless
+}
 
-        $params = array(
-            'transaction_details' => array(
-                'order_id' => Str::random(15),
-                'gross_amount' => $request->price,
-            ),
-            'customer_details' => array(
-                'name' => $request->name,
-                'handphone' => $request->handphone,
-            ),
-        );
 
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-        return view('frontend.booking.detail', compact('snapToken', 'booking', 'scheduleId'));
-    }
+    // Set your Merchant Server Key
+    \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+    // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+    \Midtrans\Config::$isProduction = false;
+    // Set sanitization on (default)
+    \Midtrans\Config::$isSanitized = true;
+    // Set 3DS transaction for credit card to true
+    \Midtrans\Config::$is3ds = true;
+
+    $params = array(
+        'transaction_details' => array(
+            'order_id' => Str::random(15),
+            'gross_amount' => $request->price,
+        ),
+        'customer_details' => array(
+            'name' => $request->name,
+            'handphone' => $request->handphone,
+        ),
+    );
+
+    $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+    return view('frontend.booking.detail', compact('snapToken', 'booking', 'scheduleId'));
+}
+
+
 
     /**
      * Display the specified resource.
@@ -169,11 +186,23 @@ $booking = Booking::create([
     public function payment_success($bookingId, $scheduleId)
     {
         $booking = Booking::findOrFail($bookingId);
-        $booking->update(['status' => 'Paid']);
-
+        $booking->update(['status' => 'Paid']); // Update status pembayaran menjadi "Paid"
+    
         $schedule = Schedule::findOrFail($scheduleId);
         //$schedule->update(['status' => 'booked']);
-
-        return redirect()->route('service.index');
+    
+        return redirect()->route('booking.print', ['bookingId' => $booking->id]); // Redirect ke halaman struk pembayaran
     }
+    
+    public function showBooking($bookingId)
+    {
+        $booking = Booking::findOrFail($bookingId);
+        return view('frontend.booking.show', compact('booking'));
+    }
+    public function printBill($bookingId)
+{
+    $booking = Booking::findOrFail($bookingId);
+    return view('frontend.booking.show', compact('booking'));
+}
+
 }

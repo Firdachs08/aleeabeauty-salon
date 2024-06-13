@@ -16,6 +16,19 @@
                     {{ __('Orders') }}
                 </h6>
             </div>
+            <div class="col-md-4 mb-3">
+    <form action="{{ route('admin.orders.index') }}" method="GET">
+        <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request('search') }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+        </div>
+    </form>
+</div>
+
             <div class="table-responsive">
                 <table class="table table-hover table-bordered">
                     <thead>
@@ -44,8 +57,11 @@
                             </td>
                             <td>{{ $order->customer_phone }}</td>
                             <td>
-                                {{ $order->payment_status === 'cash' ? $order->payment_status : 'cashless(' . $order->payment_status . ')' }}
+                                {{ $order->payment_status === 'unpaid' ? $order->payment_status : '' . $order->payment_status . '' }}
+                                
                             </td>
+                           
+
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-primary">

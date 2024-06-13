@@ -12,6 +12,6 @@ class Booking extends Model
     protected $guarded = ['id'];
     public function schedule()
     {
-        return $this->belongsTo(Schedule::class);
+        return $this->belongsTo(Schedule::class)->withTrashed();
     }
 }

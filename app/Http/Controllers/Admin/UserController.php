@@ -1,77 +1,69 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-use App\Models\Role;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::paginate(5);
-
+        $search = $request->input('search');
+        $users = User::query()
+            ->where('username', 'LIKE', "%{$search}%")
+            ->orWhere('email', 'LIKE', "%{$search}%")
+            ->orWhere('phone', 'LIKE', "%{$search}%")
+            ->paginate(10);
         return view('admin.users.index', compact('users'));
     }
+    
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('admin.users.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StoreUserRequest $request)
-    {
-        $user = User::create($request->validated() + ['password' => bcrypt($request->password)]);
+{
+    $data = $request->validated();
+    $data['password'] = bcrypt($data['password']);
+    User::create($data);
 
-        return redirect()->route('admin.users.index')->with('message', "Successfully Created !");
-    }
+    return redirect()->route('admin.users.index')->with('message', "Successfully Created!");
+}
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         $user = User::findOrFail($id);
-    //$roles = Role::all(); // Ganti Role dengan model yang sesuai dengan role Anda
-    return view('admin.users.edit', compact('user'));
+        return view('admin.users.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateUserRequest $request, $id)
+{
+    $user = User::findOrFail($id);
+    $data = $request->validated();
+
+    if ($request->filled('password')) {
+        $data['password'] = bcrypt($data['password']);
+    } else {
+        unset($data['password']);
+    }
+
+    $user->update($data);
+
+    return redirect()->route('admin.users.index')->with('message', "Successfully Updated!");
+}
+
+    public function destroy($id)
     {
         $user = User::findOrFail($id);
-        $user->update($request->validated() + ['password' => bcrypt($request->password)]);
+        $user->delete();
 
-        return redirect()->route('admin.users.index')->with('message', "Successfully Updated !");
+        return redirect()->route('admin.users.index')->with('message', 'User successfully deleted.');
     }
-
-    // Methods for deleting users...
 }

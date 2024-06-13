@@ -6,6 +6,7 @@
     </div>
     <div class="shop-page-wrapper shop-page-padding ptb-100">
         <div class="container-fluid">
+            
             <div class="row justify-content-center">
                 @foreach ($serviceCategories as $serviceCategory)
                     <div class="col-lg-3">
@@ -13,7 +14,8 @@
                             <div class="card-body">
                                 <h4 class="card-title mb-5">{{ $serviceCategory->name }}</h4>
                                 <img src="{{ url('/frontend/assets/img/iconservice.png') }}" class="img-fluid" alt="...">
-                                <a href="{{ route('service.show', $serviceCategory->name) }}" class="btn btn-primary mt-5 d-block">Detail</a>
+                                <a href="{{ route('service.show', $serviceCategory->name) }}" class="btn btn-dark mt-5 d-block">Detail</a>
+
                             </div>
                         </div>
                     </div>

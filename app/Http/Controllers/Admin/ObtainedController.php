@@ -17,11 +17,15 @@ class ObtainedController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //abort_if(Gate::denies('obtained_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $obtaineds = Obtained::paginate(5);
+        $search = $request->input('search');
+        
+        $obtaineds = Obtained::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->paginate(5);
 
         return view('admin.obtaineds.index', compact('obtaineds'));
     }

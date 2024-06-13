@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Traits\ImageUploadTrait;
 use App\Http\Controllers\Controller;
@@ -18,12 +18,17 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {   
         //abort_if(Gate::denies('category_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $categories = Category::with('parent')->withCount('products')->latest()->paginate(5); 
-
+        $search = $request->input('search');
+        $categories = Category::with('parent')
+        ->withCount('products')
+        ->when($search, function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        })
+        ->latest()
+        ->paginate(5);
         return view('admin.categories.index', compact('categories'));
     }
 

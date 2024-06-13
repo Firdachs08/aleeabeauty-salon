@@ -35,7 +35,7 @@ class ProductRequest extends FormRequest
                     'status' => ['required'],
                     'weight' => ['required', 'numeric'],
                     'description' => ['required', 'max:1000'],
-                    'details' => ['required', 'max:10000'],
+                    //'details' => ['required', 'max:10000'],
                     'images' => ['required'],
                     'images.*' => ['mimes:jpg,jpeg,png,gif', 'max:4000']
                 ];
@@ -50,8 +50,8 @@ class ProductRequest extends FormRequest
                     'quantity' => ['required', 'numeric'],
                     'category_id' => ['required'],
                     'tags.*' => ['required'],
-                    'details' => ['required', 'max:10000'],
-                    'review_able' => ['nullable'],
+                    //'details' => ['required', 'max:10000'],
+                   
                     'status' => ['required'],
                     'images' => ['nullable'],
                     'images.*' => ['mimes:jpg,jpeg,png,gif', 'max:4000']

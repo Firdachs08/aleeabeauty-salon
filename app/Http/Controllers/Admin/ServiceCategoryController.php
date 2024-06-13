@@ -16,10 +16,15 @@ class ServiceCategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //abort_if(Gate::denies('category_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        $serviceCategories = ServiceCategory::get();
+        $search = $request->input('search');
+        
+        $serviceCategories = ServiceCategory::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->paginate(10);
         return view('admin.servicecategory.index', compact('serviceCategories'));
     }
 

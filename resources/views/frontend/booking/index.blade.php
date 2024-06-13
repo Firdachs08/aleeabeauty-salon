@@ -18,6 +18,16 @@
                 <div class="col-lg-6">
                     <form action="{{ route('booking.store') }}" method="POST">
                         @csrf
+                        <!-- Tambahkan kode untuk menampilkan pesan kesalahan -->
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
@@ -81,5 +91,20 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('form').addEventListener('submit', function (e) {
+                // Ambil nilai dari checkbox cash dan cashless
+                var cashChecked = document.getElementById('cash').checked;
+                var cashlessChecked = document.getElementById('cashless').checked;
+
+                // Periksa apakah keduanya dicentang
+                if (cashChecked && cashlessChecked) {
+                    e.preventDefault(); // Hentikan pengiriman formulir
+                    document.getElementById('paymentAlert').style.display = 'block'; // Tampilkan pesan peringatan
+                }
+            });
+        });
+    </script>
 @endsection
 

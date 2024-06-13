@@ -11,11 +11,12 @@
         </div>
     @endif
     <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex">
-                <h6 class="m-0 font-weight-bold text-primary">
-                    {{ __('Tags') }}
-                </h6>
-                <div class="ml-auto">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                {{ __('Tags') }}
+            </h6>
+            <div class="d-flex">
+                <div class="mr-2">
                     @can('tag_create')
                     <a href="{{ route('admin.tags.create') }}" class="btn btn-primary">
                         <span class="icon text-white-50">
@@ -25,57 +26,62 @@
                     </a>
                     @endcan
                 </div>
+                <form action="{{ route('admin.tags.index') }}" method="GET" class="form-inline">
+                    <input type="text" name="search" class="form-control mr-2" placeholder="Search tags">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
             </div>
-            <div class="table-responsive">
-                <table class="table table-bordered" cellspacing="0" width="100%">
-                    <thead>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered" cellspacing="0" width="100%">
+                <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Name</th>
+                    <th>Product count</th>
+                    <th class="text-center" style="width: 30px;">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse($tags as $tag)
                     <tr>
-                        <th>No</th>
-                        <th>Name</th>
-                        <th>Product count</th>
-                        <th class="text-center" style="width: 30px;">Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @forelse($tags as $tag)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td><a href="{{ route('admin.tags.show', $tag->id) }}">
-                                    {{ $tag->name }}
+                        <td>{{ $loop->iteration }}</td>
+                        <td><a href="{{ route('admin.tags.show', $tag->id) }}">
+                                {{ $tag->name }}
+                            </a>
+                        </td>
+                        <td>{{ $tag->products_count }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ route('admin.tags.edit', $tag) }}" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-edit"></i>
                                 </a>
-                            </td>
-                            <td>{{ $tag->products_count }}</td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('admin.tags.edit', $tag) }}" class="btn btn-sm btn-primary">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-                                    <form onclick="return confirm('are you sure !')" action="{{ route('admin.tags.destroy', $tag) }}"
-                                    method="POST">
+                                <form onclick="return confirm('are you sure !')" action="{{ route('admin.tags.destroy', $tag) }}"
+                                      method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger" type="submit"><i class="fa fa-trash"></i></button>
                                 </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td class="text-center" colspan="6">No tags found.</td>
-                        </tr>
-                    @endforelse
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="6">
-                                <div class="float-right">
-                                    {!! $tags->appends(request()->all())->links() !!}
-                                </div>
-                            </td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td class="text-center" colspan="6">No tags found.</td>
+                    </tr>
+                @endforelse
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="6">
+                        <div class="float-right">
+                            {!! $tags->appends(request()->all())->links() !!}
+                        </div>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
         </div>
+    </div>
    </div>
 @endsection

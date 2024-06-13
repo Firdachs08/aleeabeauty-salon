@@ -22,6 +22,14 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
+                <form action="{{ route('admin.obtained.index') }}" method="GET" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search..." name="search" value="{{ request()->input('search') }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
                     <table class="table table-bordered" cellspacing="0" width="100%">
                         <thead>
                             <tr>

@@ -31,15 +31,25 @@ Route::get('shop/{slug?}', [\App\Http\Controllers\ShopController::class, 'index'
 Route::get('shop/tag/{slug}', [\App\Http\Controllers\ShopController::class, 'tag'])->name('shop.tag');
 Route::get('product/{slug}', [\App\Http\Controllers\ProductController::class, 'show'])->name('product.show');
 
-Route::resource('favorite', \App\Http\Controllers\FavoriteController::class)->only(['index', 'store', 'destroy']);
-Route::resource('cart', \App\Http\Controllers\CartController::class)->only(['index', 'store', 'update', 'destroy']);
-
-Route::resource('/service', \App\Http\Controllers\ServiceController::class);
-Route::resource('/booking', \App\Http\Controllers\BookingController::class);
-Route::post('/midtrans-callback', [\App\Http\Controllers\BookingController::class, 'midtrans_callback']);
-Route::get('/payment-success/{bookingId}/{scheduleId}', [\App\Http\Controllers\BookingController::class, 'payment_success'])->name('payment.success');
+// Rute untuk tampilan layanan yang dapat diakses tanpa login
+Route::get('/service', [\App\Http\Controllers\ServiceController::class, 'index'])->name('service.index');
+Route::get('/service/{id}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('service.show');
 
 Route::group(['middleware' => 'auth'], function () {
+    Route::resource('favorite', \App\Http\Controllers\FavoriteController::class)->only(['index', 'store', 'destroy']);
+    Route::resource('cart', \App\Http\Controllers\CartController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    // Rute untuk pemesanan layanan yang memerlukan login
+    Route::post('/service', [\App\Http\Controllers\ServiceController::class, 'store'])->name('service.store');
+    Route::put('/service/{id}', [\App\Http\Controllers\ServiceController::class, 'update'])->name('service.update');
+    Route::delete('/service/{id}', [\App\Http\Controllers\ServiceController::class, 'destroy'])->name('service.destroy');
+
+    Route::resource('/booking', \App\Http\Controllers\BookingController::class);
+    Route::get('/bookings/{bookingId}', [\App\Http\Controllers\BookingController::class, 'showBooking'])->name('bookings.show');
+
+    Route::post('/midtrans-callback', [\App\Http\Controllers\BookingController::class, 'midtrans_callback']);
+    Route::get('/payment-success/{bookingId}/{scheduleId}', [\App\Http\Controllers\BookingController::class, 'payment_success'])->name('payment.success');
+    Route::get('/booking/{bookingId}/print', [\App\Http\Controllers\BookingController::class, 'printBill'])->name('booking.print');
 
     Route::get('profile', [\App\Http\Controllers\Auth\ProfileController::class, 'index'])->name('profile.index');
     Route::put('profile', [\App\Http\Controllers\Auth\ProfileController::class, 'update'])->name('profile.update');
@@ -64,22 +74,27 @@ Route::group(['middleware' => 'auth'], function () {
         Route::resource('tags', \App\Http\Controllers\Admin\TagController::class);
         Route::post('/products/remove-image', [\App\Http\Controllers\Admin\ProductController::class, 'removeImage'])->name('products.removeImage');
         Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
-        Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class)->only(['index', 'edit', 'update', 'destroy', 'show']);
-
+        
         Route::resource('schedule', \App\Http\Controllers\Admin\ScheduleController::class);
         Route::resource('category', \App\Http\Controllers\Admin\ServiceCategoryController::class);
         Route::resource('service', \App\Http\Controllers\Admin\ServiceController::class);
         Route::resource('obtained', \App\Http\Controllers\Admin\ObtainedController::class);
 
         Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class)->only(['index', 'show', 'destroy']);
+        Route::post('orders/{order}/mark-as-paid', [\App\Http\Controllers\Admin\OrderController::class, 'markAsPaid'])->name('orders.markAsPaid');
+        Route::post('orders/{order}/save-payment', [\App\Http\Controllers\Admin\OrderController::class, 'savePayment'])->name('orders.savePayment');
         Route::get('orders/{orderId}/cancel', [\App\Http\Controllers\Admin\OrderController::class, 'cancel'])->name('orders.cancel');
         Route::put('orders/cancel/{orderId}', [\App\Http\Controllers\Admin\OrderController::class, 'cancelUpdate'])->name('orders.cancelUpdate');
         Route::post('orders/complete/{orderId}', [\App\Http\Controllers\Admin\OrderController::class, 'complete'])->name('orders.complete');
         Route::resource('/booking', \App\Http\Controllers\Admin\BookingController::class);
-        Route::resource('shipments', \App\Http\Controllers\Admin\ShipmentController::class)->only(['index', 'edit', 'update']);
-
+        Route::get('booking/{id}/view', [\App\Http\Controllers\Admin\BookingController::class, 'view'])->name('booking.view');
+        Route::delete('booking/{id}', [\App\Http\Controllers\Admin\BookingController::class, 'destroy'])->name('booking.destroy');
+        
         Route::get('reports/revenue', [\App\Http\Controllers\Admin\ReportController::class, 'revenue'])->name('reports.revenue');
-       Route::post('reports/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('reports.export');
+        Route::post('reports/print', [\App\Http\Controllers\Admin\ReportController::class, 'print'])->name('reports.print');
+        Route::post('reports/download', [\App\Http\Controllers\Admin\ReportController::class, 'download'])->name('reports.download');
+        Route::get('/reports/total-revenue', [\App\Http\Controllers\Admin\ReportController::class, 'totalRevenue'])->name('reports.total-revenue');
+        Route::post('reports/view',  [\App\Http\Controllers\Admin\ReportController::class, 'view'])->name('reports.view');
     });
 });
 

@@ -20,6 +20,7 @@ class ServiceController extends Controller
         $serviceCategories = ServiceCategory::get();
         return view('frontend.service.index', compact('serviceCategories'));
     }
+    
 
     /**
      * Show the form for creating a new resource.

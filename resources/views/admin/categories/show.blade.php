@@ -18,14 +18,14 @@
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Parent</th>
+                        
                         <th>Created at</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td>{{ $category->name }}</td>
-                        <td>{{ $category->parent->name ?? '' }}</td>
+                        
                         <td>{{ $category->created_at }}</td>
                     </tr>
                     </tbody>

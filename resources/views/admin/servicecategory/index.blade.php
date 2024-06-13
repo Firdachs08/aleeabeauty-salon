@@ -21,6 +21,14 @@
     <!-- Content Row -->
         <div class="card">
             <div class="card-body">
+            <form action="{{ route('admin.category.index') }}" method="GET" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search" placeholder="Search by category name..." value="{{ request('search') }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
                 <div class="table-responsive">
                     <table class="table table-bordered" cellspacing="0" width="100%">
                         <thead>

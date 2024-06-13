@@ -7,10 +7,10 @@
             <div class="col-lg-12">
                 <div class="card card-default">
                     <div class="card-header card-header-border-bottom">
-                        <h2>Data Laporan</h2>
+                        <h2>Revenue Report</h2>
                     </div>
                     <div class="card-body">
-                        <form id="printForm" action="{{ route('admin.reports.download') }}" method="POST" class="mb-5">
+                        <form id="printForm" action="{{ route('admin.reports.view') }}" method="POST" class="mb-5">
                             @csrf
                             <div class="row">
                                 <div class="col-lg-3">
@@ -33,12 +33,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 d-flex align-items-end">
+
+                                <div class="col-lg-3">
                                     <div class="form-group mx-sm-3 mb-2">
-                                        <input type="hidden" name="export" value="xlsx">
-                                        <button type="submit" class="btn btn-primary btn-default">
-                                            <i class="fas fa-print"></i> Cetak
-                                        </button>
+                                        <div class="input-group">
+                                            <button type="submit" class="btn btn-primary btn-default ml-2">
+                                                <i class="fas fa-print"></i> Lihat
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -51,7 +53,7 @@
                                         <th>Date</th>
                                         <th>User</th>
                                         <th>Service</th>
-                                        <th class="text-right">Price</th>
+                                        <th>Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -61,14 +63,13 @@
                                         <td>{{ $record->created_at }}</td>
                                         <td>{{ $record->name }}</td>
                                         <td>{{ $record->category }} - {{ $record->service_name }}</td>
-                                        <td class="text-right">{{ number_format($record->total, 0, '.', '.') }}</td>
+                                        <td>{{ number_format($record->total, 0, '.', '.') }}</td>
                                     </tr>
                                     @endif
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </div>

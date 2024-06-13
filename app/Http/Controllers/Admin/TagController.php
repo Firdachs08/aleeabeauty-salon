@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\Admin\TagRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
@@ -15,11 +16,16 @@ class TagController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //abort_if(Gate::denies('tag_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $tags = Tag::withCount('products')->latest()->paginate(5);
+        $search = $request->input('search');
+        
+        $tags = Tag::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->withCount('products') // Menambahkan count relasi products
+            ->paginate(10);
 
         return view('admin.tags.index', compact('tags'));
     }

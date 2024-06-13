@@ -8,12 +8,14 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col">
-                    <h3 class="text-center">Please come to the salon on the <span class="font-weight-bold">{{ $booking->date }}</span> at <span class="font-weight-bold">{{ $booking->time }}.</span></h1>
+                <h3 class="text-center">Silahkan datang ke <span class="font-weight-bold">Aleea Salon</span> pada tanggal <span class="font-weight-bold">{{ $booking->date }}</span> pukul <span class="font-weight-bold">{{ $booking->schedule->start_time }} - {{ $booking->schedule->end_time }}.</span></h1>
                     <div class="text-center">
-                        <a class="btn btn-dark mt-2" href="{{ route('homepage') }}">Back</a>
+                    <div class="text-center">
+                        <a class="btn btn-dark mt-2" href="{{ route('bookings.show', $booking->id) }}">Lihat</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
 @endsection
